@@ -3,7 +3,6 @@ import random
 from kafka import KafkaProducer
 from kafka import KafkaAdminClient
 from kafka.admin import NewTopic
-import string
 import logging
 import sys
 
