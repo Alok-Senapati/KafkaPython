@@ -14,12 +14,12 @@ BOOTSTRAP_SERVERS = 'localhost:9092'
 DATA_PATH = 'data/data.json'
 
 
-def is_topic_exists(kafka_client, topic_name):
+def is_topic_exists(kafka_client: KafkaAdminClient, topic_name: str):
     """
     Check if a topic exists in Kafka
     :param kafka_client: KafkaAdminClient
     :param topic_name: Name of the topic
-    :return:
+    :return: True if the topic exists, False otherwise
     """
     logging.info(f"Checking if {topic_name} exists in Kafka......................")
     try:
@@ -29,12 +29,11 @@ def is_topic_exists(kafka_client, topic_name):
         raise e
 
 
-def create_topic_if_not_exists(kafka_client, topic_name):
+def create_topic_if_not_exists(kafka_client: KafkaAdminClient, topic_name: str):
     """
     Create a topic in Kafka if it does not exist
     :param kafka_client: KafkaAdminClient
     :param topic_name: Name of the topic
-    :return:
     """
     try:
         if is_topic_exists(kafka_client, topic_name):
@@ -50,12 +49,11 @@ def create_topic_if_not_exists(kafka_client, topic_name):
         raise e
 
 
-def produce_kafka(bootstrap_server, topic_name):
+def produce_kafka(bootstrap_server: str, topic_name: str):
     """
     Produce data to Kafka
     :param bootstrap_server: KAFKA Bootstrap Server
     :param topic_name: Name of the topic
-    :return:
     """
     try:
         producer = KafkaProducer(bootstrap_servers=bootstrap_server)
@@ -72,7 +70,6 @@ def produce_kafka(bootstrap_server, topic_name):
 def main():
     """
     Main function to Create a topic and produce data to Kafka
-    :return:
     """
     topic_name = sys.argv[1]
     kafka_client = KafkaAdminClient(bootstrap_servers=BOOTSTRAP_SERVERS)
