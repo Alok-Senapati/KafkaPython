@@ -3,15 +3,15 @@ import random
 from kafka import KafkaProducer
 from kafka import KafkaAdminClient
 from kafka.admin import NewTopic
+from utils.logging_utils import create_logger
 import logging
 import sys
-
-# Setup Logging to show INFO level messages and Timestamp, level, module and line number
-logging.basicConfig(level=logging.INFO, format='[%(asctime)s %(levelname)s] - {%(module)s  %(lineno)d} - %(message)s')
 
 
 BOOTSTRAP_SERVERS = 'localhost:9092'
 DATA_PATH = 'data/data.json'
+
+logger = create_logger()
 
 
 def is_topic_exists(kafka_client: KafkaAdminClient, topic_name: str):
@@ -21,7 +21,7 @@ def is_topic_exists(kafka_client: KafkaAdminClient, topic_name: str):
     :param topic_name: Name of the topic
     :return: True if the topic exists, False otherwise
     """
-    logging.info(f"Checking if {topic_name} exists in Kafka......................")
+    logger.info(f"Checking if {topic_name} exists in Kafka......................")
     try:
         return topic_name in kafka_client.list_topics()
     except Exception as e:
@@ -37,15 +37,15 @@ def create_topic_if_not_exists(kafka_client: KafkaAdminClient, topic_name: str):
     """
     try:
         if is_topic_exists(kafka_client, topic_name):
-            logging.info(f"Topic {topic_name} already exists......................")
+            logger.info(f"Topic {topic_name} already exists......................")
             return
-        logging.info(f"Creating Topic {topic_name}......................")
+        logger.info(f"Creating Topic {topic_name}......................")
 
         topic_list = [NewTopic(name=topic_name, num_partitions=1, replication_factor=1)]
         kafka_client.create_topics(new_topics=topic_list, validate_only=False)
-        logging.info(f"Kafka topic {topic_name} created successfully......................")
+        logger.info(f"Kafka topic {topic_name} created successfully......................")
     except Exception as e:
-        logging.error(f"Error while creating topic {topic_name} - {e}......................")
+        logger.error(f"Error while creating topic {topic_name} - {e}......................")
         raise e
 
 
@@ -59,11 +59,11 @@ def produce_kafka(bootstrap_server: str, topic_name: str):
         producer = KafkaProducer(bootstrap_servers=bootstrap_server)
         data = open(DATA_PATH, 'rb')
         for line in data:
-            logging.info(f"Producing data to Kafka - {line}......................")
+            logger.info(f"Publishing record to Kafka: {line}......................")
             producer.send(topic_name, line)
             time.sleep(random.random() * 2)
     except Exception as e:
-        logging.error(f"Error while producing data to Kafka - {e}......................")
+        logger.error(f"Error while producing data to Kafka - {e}......................")
         raise e
 
 
