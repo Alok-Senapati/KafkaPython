@@ -9,7 +9,7 @@ import sys
 
 
 BOOTSTRAP_SERVERS = 'localhost:9092'
-DATA_PATH = 'data/data.json'
+DATA_PATH = '../data/data.json'
 
 logger = create_logger()
 
